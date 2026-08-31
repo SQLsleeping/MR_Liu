@@ -4,6 +4,8 @@ import omni.ext
 import omni.ui as ui
 import omni.usd
 
+from .scene import apply_environment_map, spawn_table_and_so101
+
 
 def _project_root() -> str:
     # extensions/mr_liu.project/mr_liu/project/extension.py -> repo root
@@ -17,13 +19,13 @@ def _default_scene_path() -> str:
 class MrLiuProjectExtension(omni.ext.IExt):
     def on_startup(self, ext_id: str) -> None:
         self._ext_id = ext_id
-        self._window = ui.Window("MR Liu Project", width=360, height=180)
+        self._window = ui.Window("MR Liu Project", width=380, height=260)
         scene_path = _default_scene_path()
 
         with self._window.frame:
             with ui.VStack(spacing=8):
                 ui.Label("MR Liu Isaac Sim Project", height=24)
-                ui.Label(f"Scene: {scene_path}", word_wrap=True, height=40)
+                ui.Label("Lab table + SO-101 arm. First load may take a few minutes.", word_wrap=True, height=36)
 
                 def load_scene() -> None:
                     if not os.path.isfile(scene_path):
@@ -32,7 +34,21 @@ class MrLiuProjectExtension(omni.ext.IExt):
                     omni.usd.get_context().open_stage(scene_path)
                     print(f"[mr_liu.project] Opened {scene_path}")
 
+                def place_assets() -> None:
+                    try:
+                        spawn_table_and_so101()
+                    except Exception as exc:
+                        print(f"[mr_liu.project] Failed to place assets: {exc}")
+
+                def place_hdri() -> None:
+                    try:
+                        apply_environment_map()
+                    except Exception as exc:
+                        print(f"[mr_liu.project] Failed to apply HDRI: {exc}")
+
                 ui.Button("Load Default Scene", height=32, clicked_fn=load_scene)
+                ui.Button("Place Table + SO-101", height=32, clicked_fn=place_assets)
+                ui.Button("Apply Environment Map", height=32, clicked_fn=place_hdri)
 
         print(f"[mr_liu.project] Extension started ({ext_id})")
 

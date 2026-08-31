@@ -3,15 +3,15 @@
     customLayerData = {
         dictionary cameraSettings = {
             dictionary Front = {
-                double3 position = (5, 0, 0)
+                double3 position = (5, 0, 1.05)
                 double radius = 5
             }
             dictionary Perspective = {
-                double3 position = (4.5, 4.5, 3.2)
-                double3 target = (0, 0, 0.25)
+                double3 position = (1.9, 1.7, 1.85)
+                double3 target = (0.25, 0, 1.15)
             }
             dictionary Right = {
-                double3 position = (0, -5, 0)
+                double3 position = (0, -5, 1.05)
                 double radius = 5
             }
             dictionary Top = {
@@ -41,9 +41,18 @@ def Xform "World"
     def DistantLight "DistantLight"
     {
         float inputs:angle = 1
-        float inputs:intensity = 3000
+        float inputs:intensity = 1200
         float3 xformOp:rotateXYZ = (315, 0, 0)
         uniform token[] xformOpOrder = ["xformOp:rotateXYZ"]
+    }
+
+    def DomeLight "DomeLight"
+    {
+        float inputs:intensity = 1000
+        bool inputs:normalize = 1
+        asset inputs:texture:file = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.0/NVIDIA/Assets/Skies/Studio/photo_studio_01_4k.hdr@
+        token inputs:texture:format = "latlong"
+        bool visibleInPrimaryRay = 1
     }
 
     def Mesh "GroundPlane" (
@@ -66,14 +75,20 @@ def Xform "World"
         color3f[] primvars:displayColor = [(0.35, 0.35, 0.35)]
     }
 
-    def Cube "DynamicCube" (
-        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+    def Xform "Table" (
+        prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.0/Isaac/Props/Mounts/SeattleLabTable/table_instanceable.usd@
     )
     {
-        double size = 0.4
-        float3 xformOp:translate = (0, 0, 1.2)
+        quatf xformOp:orient = (0.70710678, 0, 0, 0.70710678)
+        double3 xformOp:translate = (0.5, 0, 1.05)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient"]
+    }
+
+    def Xform "SO101" (
+        prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/6.0/Isaac/Robots/RobotStudio/so101_new_calib/so101_new_calib.usd@
+    )
+    {
+        double3 xformOp:translate = (0, 0, 1.05)
         uniform token[] xformOpOrder = ["xformOp:translate"]
-        float physics:mass = 1
-        color3f[] primvars:displayColor = [(0.15, 0.65, 0.95)]
     }
 }

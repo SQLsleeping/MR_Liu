@@ -1,39 +1,33 @@
-"""Standalone Isaac Sim 6.0 entry point for the MR Liu project."""
+"""Standalone Isaac Sim 6.0 scene: lab table with an SO-101 arm on top."""
 
 from isaacsim import SimulationApp
 
 simulation_app = SimulationApp({"headless": False})
 
+import sys
+from pathlib import Path
+
 import isaacsim.core.experimental.utils.app as app_utils
 import isaacsim.core.experimental.utils.stage as stage_utils
-from isaacsim.core.experimental.materials import PreviewSurfaceMaterial
-from isaacsim.core.experimental.objects import Cube, DistantLight, GroundPlane
-from isaacsim.core.experimental.prims import GeomPrim, RigidPrim
+from isaacsim.core.experimental.objects import DistantLight, GroundPlane
 from isaacsim.core.simulation_manager import SimulationManager
 
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "extensions" / "mr_liu.project"))
+
+from mr_liu.project.scene import spawn_table_and_so101
+
 stage_utils.create_new_stage()
-
 GroundPlane("/World/GroundPlane", positions=[0, 0, 0])
-
 distant_light = DistantLight("/World/DistantLight")
-distant_light.set_intensities(3000)
+distant_light.set_intensities(1200)
 
-cyan_material = PreviewSurfaceMaterial("/World/Materials/cyan")
-cyan_material.set_input_values("diffuseColor", [0.15, 0.65, 0.95])
-
-dynamic_cube = Cube(
-    paths="/World/DynamicCube",
-    positions=[0, 0, 1.2],
-    sizes=0.4,
-)
-dynamic_cube.apply_visual_materials(cyan_material)
-RigidPrim(paths="/World/DynamicCube")
-GeomPrim(paths="/World/DynamicCube", apply_collision_apis=True)
+spawn_table_and_so101()
 
 SimulationManager.set_physics_dt(1.0 / 60.0)
 app_utils.play()
 
-print("[mr_liu] Hello World scene is running. Close the window to exit.")
+print("[mr_liu] Table + SO-101 scene is running. Close the window to exit.")
 
 while simulation_app.is_running():
     simulation_app.update()
