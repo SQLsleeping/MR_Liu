@@ -14,4 +14,4 @@ readme = "docs/README.md"
 "omni.usd" = {}
 
 [[python.module]]
-name = "mr_liu.project"
+name = "mr_liu_ext"

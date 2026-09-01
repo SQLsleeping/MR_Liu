@@ -91,4 +91,13 @@ def Xform "World"
         double3 xformOp:translate = (0, 0, 1.05)
         uniform token[] xformOpOrder = ["xformOp:translate"]
     }
+
+    # World-fixed weld at the tabletop pose. Table is a static collider, so this
+    # is the same as clamping the arm to the desk. Body0 omitted = world.
+    def PhysicsFixedJoint "SO101Mount"
+    {
+        rel physics:body1 = </World/SO101/base>
+        float physics:breakForce = inf
+        float physics:breakTorque = inf
+    }
 }
